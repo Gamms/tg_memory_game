@@ -44,6 +44,7 @@ const initialState = {
 };
 
 const gameReducer = (state, action) => {
+  if (isNaN(state.score)){state.score=0}
   switch (action.type) {
     case 'FLIP_CARD':
       if (state.flipped.length < 2 && !state.flipped.includes(action.index) && !state.matched.includes(state.deck[action.index].image)) {

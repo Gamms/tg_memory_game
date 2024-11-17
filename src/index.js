@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import { initMainButton, initMiniApp,  initUtils,  mockTelegramEnv, parseInitData} from '@telegram-apps/sdk';
-
+import { TwaAnalyticsProvider } from '@tonsolutions/telemetree-react';
 
 const initializeTelegramSDK = async () => {
   try {
@@ -67,7 +67,13 @@ const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <App />
+    <TwaAnalyticsProvider
+      projectId='d8a25ded-bbb2-4127-add1-a58be38c4cba'
+      apiKey='0079639d-c877-4687-ba32-f515a506b964'
+      appName='Memory Game'
+    >
+      <App />
+    </TwaAnalyticsProvider>
   </React.StrictMode>
 );
 

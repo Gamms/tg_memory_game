@@ -3,6 +3,17 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import { initMainButton, initMiniApp,  initUtils,  mockTelegramEnv, parseInitData} from '@telegram-apps/sdk';
 import { TwaAnalyticsProvider } from '@tonsolutions/telemetree-react';
+import eruda from 'eruda';
+// Добавляем консоль для отладки на мобильных устройствах
+if (process.env.NODE_ENV === 'development' || true) { // true для принудительного включения
+  const script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+  document.body.appendChild(script);
+  script.onload = () => {
+    eruda.init();
+    console.log('Eruda initialized - mobile console enabled');
+  };
+}
 
 const initializeTelegramSDK = async () => {
 try {
@@ -12,7 +23,7 @@ try {
     await miniApp.ready();
     miniApp.setHeaderColor('#fcb69f');
 // Инициализация главной кнопки
-const [mainButton] = initMainButton;
+const [mainButton] = initMainButton();
 mainButton.setParams({
   backgroundColor: '#aa1388',
   text: 'Поделиться очками',

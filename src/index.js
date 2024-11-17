@@ -12,28 +12,31 @@ const initializeTelegramSDK = async () => {
     await miniApp.ready();
     miniApp.setHeaderColor('#fcb69f');
 // Инициализация главной кнопки
-const [mainButtonB] = initMainButton;
-mainButtonB.setParams({
+const [mainButton] = initMainButton();
+mainButton.setParams({
   backgroundColor: '#aa1388',
   text: 'Поделиться очками',
   isVisible: true,
   isEnabled: true,
 });
-mainButtonB.show();
 
-const utilsB = initUtils();
+
+const utils = initUtils();
 
 // Установка обработчика нажатия на главную кнопку
-mainButtonB.on('click', () => {
+mainButton.on('click', () => {
   try {
     // Получение текущих очков из localStorage
     const score = localStorage.getItem('memory-game-score') || 0;
-    utilsB.shareURL(`Посмотрите! У меня ${score} очков в игре!`);
+    utils.shareURL(`Посмотрите! У меня ${score} очков в игре!`);
     console.log('Окно выбора чата открыто для отправки сообщения.');
   } catch (error) {
     console.error('Ошибка при открытии окна выбора чата:', error);
   }
-});
+}
+
+);
+mainButton.show();
   } catch (error) {
     // В случае ошибки инициализируем фейковое окружение
     console.error('Ошибка при инициализации Telegram:', error);

@@ -11,7 +11,29 @@ const initializeTelegramSDK = async () => {
     const [miniApp] = initMiniApp();
     await miniApp.ready();
     miniApp.setHeaderColor('#fcb69f');
+// Инициализация главной кнопки
+const [mainButtonB] = initMainButton;
+mainButtonB.setParams({
+  backgroundColor: '#aa1388',
+  text: 'Поделиться очками',
+  isVisible: true,
+  isEnabled: true,
+});
+mainButtonB.show();
 
+const utilsB = initUtils();
+
+// Установка обработчика нажатия на главную кнопку
+mainButtonB.on('click', () => {
+  try {
+    // Получение текущих очков из localStorage
+    const score = localStorage.getItem('memory-game-score') || 0;
+    utilsB.shareURL(`Посмотрите! У меня ${score} очков в игре!`);
+    console.log('Окно выбора чата открыто для отправки сообщения.');
+  } catch (error) {
+    console.error('Ошибка при открытии окна выбора чата:', error);
+  }
+});
   } catch (error) {
     // В случае ошибки инициализируем фейковое окружение
     console.error('Ошибка при инициализации Telegram:', error);
@@ -77,26 +99,3 @@ root.render(
   </React.StrictMode>
 );
 
-// Инициализация главной кнопки
-const [mainButtonB] = initMainButton;
-mainButtonB.setParams({
-  backgroundColor: '#aa1388',
-  text: 'Поделиться очками',
-  isVisible: true,
-  isEnabled: true,
-});
-mainButtonB.show();
-
-const utilsB = initUtils();
-
-// Установка обработчика нажатия на главную кнопку
-mainButtonB.on('click', () => {
-  try {
-    // Получение текущих очков из localStorage
-    const score = localStorage.getItem('memory-game-score') || 0;
-    utilsB.shareURL(`Посмотрите! У меня ${score} очков в игре!`);
-    console.log('Окно выбора чата открыто для отправки сообщения.');
-  } catch (error) {
-    console.error('Ошибка при открытии окна выбора чата:', error);
-  }
-});

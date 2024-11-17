@@ -5,21 +5,20 @@ import { initMainButton, initMiniApp,  initUtils,  mockTelegramEnv, parseInitDat
 import { TwaAnalyticsProvider } from '@tonsolutions/telemetree-react';
 
 const initializeTelegramSDK = async () => {
-  try {
+try {
     // Попытка инициализировать настоящее окружение Telegram
     console.log("Инициализация окружения Telegram");
     const [miniApp] = initMiniApp();
     await miniApp.ready();
     miniApp.setHeaderColor('#fcb69f');
 // Инициализация главной кнопки
-const [mainButton] = initMainButton();
+const [mainButton] = initMainButton;
 mainButton.setParams({
   backgroundColor: '#aa1388',
   text: 'Поделиться очками',
   isVisible: true,
   isEnabled: true,
 });
-
 
 const utils = initUtils();
 
@@ -33,10 +32,10 @@ mainButton.on('click', () => {
   } catch (error) {
     console.error('Ошибка при открытии окна выбора чата:', error);
   }
-}
+});
 
-);
 mainButton.show();
+
   } catch (error) {
     // В случае ошибки инициализируем фейковое окружение
     console.error('Ошибка при инициализации Telegram:', error);

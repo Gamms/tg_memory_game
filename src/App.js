@@ -1,13 +1,33 @@
 import React, { useReducer, useEffect } from 'react';
 import './App.css';
+import catEating from './images/cat-eat.svg'
+import catDrink from './images/cat-drink-tea.svg'
+import catHide from './images/cat-hiding.svg'
+import catSleep from './images/cat-sleep.svg'
+import catScared from './images/scaredy-cat.svg'
+import catHunt from './images/cat-hunt-.svg'
+
+// Создаем массив URL котиков (используем placeholders, так как реальные картинки могут не загрузиться)
+const catImages = [
+  catDrink,
+  catEating,
+  catHide,
+  catHunt,
+  catSleep,
+  catScared,  
+//  './images/cat-eat.svg',
+//  './images/cat-hiding.svg',
+//  './images/cat-hunt-.svg',
+//  './images/cat-sleep.svg',
+//  './images/scaredy-cat.svg',
+];
 
 const generateDeck = () => {
-  const colors = ['#FF6347', '#4682B4', '#32CD32', '#FFD700', '#FF69B4', '#8A2BE2'];
   const deck = [];
-  // Каждому цвету добавляем две карточки
-  for (let color of colors) {
-    deck.push({ color, matched: false });
-    deck.push({ color, matched: false });
+  // Каждому изображению добавляем две карточки
+  for (let catUrl of catImages) {
+    deck.push({ image: catUrl, matched: false });
+    deck.push({ image: catUrl, matched: false });
   }
   // Перемешиваем колоду
   return deck.sort(() => Math.random() - 0.5);
@@ -18,7 +38,7 @@ const initialState = {
   flipped: [],
   matched: [],
   turns: 0,
-  score: 0,
+  score: parseInt(localStorage.getItem('memory-game-score')),
   pendingReset: false,
   gameOver: false,
 };
@@ -26,17 +46,19 @@ const initialState = {
 const gameReducer = (state, action) => {
   switch (action.type) {
     case 'FLIP_CARD':
-      // Переворачиваем карточку
-      if (state.flipped.length < 2 && !state.flipped.includes(action.index) && !state.matched.includes(state.deck[action.index].color)) {
+      if (state.flipped.length < 2 && !state.flipped.includes(action.index) && !state.matched.includes(state.deck[action.index].image)) {
         return { ...state, flipped: [...state.flipped, action.index] };
       }
       return state;
     case 'CHECK_MATCH':
-      // Проверяем совпадение перевернутых карточек
       const [first, second] = state.flipped;
-      if (state.deck[first].color === state.deck[second].color) {
-        const newMatched = [...state.matched, state.deck[first].color];
+      if (state.deck[first].image === state.deck[second].image) {
+        const newMatched = [...state.matched, state.deck[first].image];
         const isGameOver = newMatched.length === state.deck.length / 2;
+        // Сохраняем счет в localStorage для sharing button
+        if (isGameOver) {
+          localStorage.setItem('memory-game-score', state.score + 1);
+        }
         return {
           ...state,
           matched: newMatched,
@@ -49,13 +71,10 @@ const gameReducer = (state, action) => {
         return { ...state, pendingReset: true };
       }
     case 'RESET_FLIPPED':
-      // Сбрасываем перевернутые карточки
       return { ...state, flipped: [], pendingReset: false };
     case 'INCREMENT_TURN':
-      // Увеличиваем счетчик попыток
       return { ...state, turns: state.turns + 1 };
     case 'RESET_GAME':
-      // Сбрасываем состояние игры
       return {
         ...initialState,
         deck: generateDeck(),
@@ -68,7 +87,6 @@ const gameReducer = (state, action) => {
 const App = () => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
-  // Проверка на совпадение перевернутых карточек
   useEffect(() => {
     if (state.flipped.length === 2) {
       dispatch({ type: 'CHECK_MATCH' });
@@ -76,7 +94,6 @@ const App = () => {
     }
   }, [state.flipped]);
 
-  // Таймер для сброса перевернутых карточек
   useEffect(() => {
     if (state.pendingReset) {
       const timer = setTimeout(() => {
@@ -86,7 +103,6 @@ const App = () => {
     }
   }, [state.pendingReset]);
 
-  // Обработка клика на карточку
   const handleCardClick = (index) => {
     if (!state.gameOver && state.flipped.length < 2 && !state.flipped.includes(index)) {
       dispatch({ type: 'FLIP_CARD', index });
@@ -99,7 +115,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <h1>Memory Game</h1>
+      <h1>Котики Game</h1>
       <div className="info">
         <p>Очки: {state.score}</p>
         <p>Попытки: {state.turns}/15</p>
@@ -108,10 +124,20 @@ const App = () => {
         {state.deck.map((card, index) => (
           <div
             key={index}
-            className={`card ${state.flipped.includes(index) || state.matched.includes(card.color) ? 'flipped show' : ''}`}
-            style={{ '--card-color': card.color }}
+            className={`card ${state.flipped.includes(index) || state.matched.includes(card.image) ? 'flipped' : ''}`}
             onClick={() => handleCardClick(index)}
-          />
+          >
+            <div className="card-inner">
+              <div className="card-front">
+                {/* Рубашка карты */}
+                <div className="card-back-content">🐱</div>
+              </div>
+              <div className="card-back">
+                {/* Лицевая сторона карты с изображением */}
+                <img src={card.image} alt="cat" className="cat-image" />
+              </div>
+            </div>
+          </div>
         ))}
       </div>
       {state.gameOver && (
